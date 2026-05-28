@@ -1,0 +1,93 @@
+<section class="page">
+  <h1>Your restaurants</h1>
+
+  <form class="add-form" (submit)="$event.preventDefault(); addRestaurant()">
+    <label>
+      Country
+      <input type="text" [formControl]="addCountryControl" placeholder="Spain" />
+    </label>
+    <label>
+      Restaurant name
+      <input type="text" [formControl]="searchControl" placeholder="Start typing..." />
+    </label>
+    <label>
+      Your rate (optional 0-10)
+      <input type="number" min="0" max="10" [formControl]="rateControl" />
+    </label>
+    <button type="submit" [disabled]="!selectedSuggestion()">Add restaurant</button>
+  </form>
+
+  @if (suggestions().length > 0) {
+    <ul class="suggestions">
+      @for (suggestion of suggestions(); track suggestion.id) {
+        <li>
+          <button type="button" (click)="chooseSuggestion(suggestion)">
+            {{ suggestion.name }} ({{ suggestion.country }})
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
+  <div class="toolbar">
+    <input type="text" [formControl]="nameFilter" placeholder="Filter by name" />
+    <input type="text" [formControl]="countryFilter" placeholder="Filter by country" />
+    <select (change)="setSort($any($event.target).value)">
+      <option value="name">Sort: Name</option>
+      <option value="country">Sort: Country</option>
+      <option value="rate">Sort: Rate</option>
+      <option value="date">Sort: Date</option>
+    </select>
+    <button type="button" (click)="setViewMode('card')">Card View</button>
+    <button type="button" (click)="setViewMode('table')">Table View</button>
+  </div>
+
+  @if (filteredRestaurants().length === 0) {
+    <p class="empty">Let's start by adding your first restaurant.</p>
+  } @else if (viewMode() === 'card') {
+    <div class="cards">
+      @for (item of filteredRestaurants(); track item.id) {
+        <article class="card">
+          <div class="image-wrap">
+            <img [src]="item.imageUrl || 'https://placehold.co/320x180'" [alt]="item.name" />
+            <span class="badge">{{ item.userRate ?? 'No rate' }}</span>
+          </div>
+          <h3>{{ item.name }}</h3>
+          <p>{{ item.country }}</p>
+          @if (!item.userRate && item.userRate !== 0) {
+            <p class="warning">Missing rate</p>
+          }
+          <a [routerLink]="['/public', item.id]">See what others think about this place</a>
+        </article>
+      }
+    </div>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Country</th>
+          <th>Rate</th>
+          <th>Added At</th>
+          <th>Public</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of filteredRestaurants(); track item.id) {
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.country }}</td>
+            <td>
+              {{ item.userRate ?? 'No rate' }}
+              @if (!item.userRate && item.userRate !== 0) {
+                <span class="warning-inline">Missing</span>
+              }
+            </td>
+            <td>{{ item.addedAt | date: 'medium' }}</td>
+            <td><a [routerLink]="['/public', item.id]">Open</a></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

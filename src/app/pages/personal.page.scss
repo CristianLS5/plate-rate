@@ -1,0 +1,83 @@
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.add-form,
+.toolbar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+}
+
+input,
+button,
+select {
+  padding: 0.5rem;
+}
+
+.suggestions {
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  border: 1px solid #d9d9d9;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.image-wrap {
+  position: relative;
+}
+
+.image-wrap img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+.badge {
+  position: absolute;
+  right: 0.5rem;
+  top: 0.5rem;
+  background: #1d4ed8;
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.2rem 0.5rem;
+}
+
+.warning,
+.warning-inline {
+  color: #b45309;
+}
+
+.empty {
+  border: 1px dashed #999;
+  padding: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+}

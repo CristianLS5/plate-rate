@@ -1,0 +1,21 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "opinions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "restaurantId", "order": "ASCENDING" },
+        { "fieldPath": "userId", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "userRestaurants",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "addedAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

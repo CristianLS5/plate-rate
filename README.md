@@ -1,3 +1,68 @@
+# Plate Rate
+
+Angular + Firebase app to manage personal restaurant ratings and compare them with public opinions.
+
+## Stack
+
+- Angular 21 (standalone components + signals)
+- Firebase Auth (Google Sign-In)
+- Cloud Firestore
+- Firebase Functions (Photon proxy + rating aggregation)
+- Photon (OpenStreetMap) for low-cost place suggestions
+
+## Environment setup
+
+1. Create `src/environments/environment.ts` and fill `firebase` keys.
+2. Keep private credentials outside git.
+3. Optional: set `apiBaseUrl` to Functions emulator or deployed URL.
+
+Example:
+
+```ts
+export const environment = {
+  production: false,
+  firebase: {
+    apiKey: '...',
+    authDomain: '...',
+    projectId: '...',
+    storageBucket: '...',
+    messagingSenderId: '...',
+    appId: '...',
+  },
+  apiBaseUrl: 'http://localhost:5001/YOUR_PROJECT/us-central1',
+};
+```
+
+## Run frontend
+
+```bash
+npm install
+npm start
+```
+
+## Run functions locally
+
+```bash
+cd functions
+npm install
+npm run build
+firebase emulators:start --only functions,firestore
+```
+
+## Firestore resources
+
+- Rules: `firestore.rules`
+- Indexes: `firestore.indexes.json`
+
+## Main app flows
+
+- Login required with Google.
+- Personal list with:
+  - Card View (image, name, country, user rate badge)
+  - Table View (name, country, rate, added date)
+- Filters by name/country.
+- Sort by name, country, rate, and date (table).
+- Public detail shows your rate, global average, and opinions sorted by rate/date.
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a id="readme-top"></a>
 <!--

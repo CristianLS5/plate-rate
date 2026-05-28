@@ -1,0 +1,34 @@
+<section class="center-panel large">
+  <a routerLink="/personal">Back to your list</a>
+  @if (restaurant(); as restaurantInfo) {
+    <h1>{{ restaurantInfo.name }}</h1>
+    <p>{{ restaurantInfo.country }}</p>
+  } @else {
+    <h1>Restaurant not found</h1>
+  }
+
+  @if (myOpinion(); as opinion) {
+    <p>Your rate: <strong>{{ opinion.rate }}</strong></p>
+  } @else {
+    <p>You have not rated this place yet.</p>
+  }
+
+  @if (stats(); as statsInfo) {
+    <p>Global rate: <strong>{{ statsInfo.globalRateAvg | number: '1.1-2' }}</strong> ({{ statsInfo.ratingsCount }} votes)</p>
+  }
+
+  <h2>Opinions</h2>
+  @if (opinions().length === 0) {
+    <p>No opinions yet.</p>
+  } @else {
+    <ul class="opinions">
+      @for (item of opinions(); track item.userId + '-' + item.createdAt) {
+        <li>
+          <p><strong>{{ item.userName }}</strong> rated <strong>{{ item.rate }}</strong></p>
+          <p>{{ item.text }}</p>
+          <small>{{ item.createdAt | date: 'medium' }}</small>
+        </li>
+      }
+    </ul>
+  }
+</section>
