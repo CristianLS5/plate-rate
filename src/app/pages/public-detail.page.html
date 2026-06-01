@@ -1,50 +1,142 @@
-<section class="center-panel large">
-  <a mat-button routerLink="/personal">Back to your list</a>
-  @if (restaurant(); as restaurantInfo) {
-    <h1 class="mt-3">{{ restaurantInfo.name }}</h1>
-    <p class="text-muted">
-      {{ restaurantInfo.city }}{{ restaurantInfo.country ? ', ' + restaurantInfo.country : '' }}
-    </p>
-  } @else {
-    <h1>Restaurant not found</h1>
+<section class="page public-page">
+  <a class="back-link" mat-button routerLink="/personal">Back to your list</a>
+
+  @if (loadError()) {
+    <p class="alert-inline" role="alert">{{ loadError() }}</p>
   }
 
-  <div class="mb-6 mt-4 grid gap-3 sm:grid-cols-2">
-    <mat-card class="rounded-xl">
-      <mat-card-content>
-        @if (myOpinion(); as opinion) {
-          <p>Your rate: <strong>{{ opinion.rate }}</strong></p>
-        } @else {
-          <p>You have not rated this place yet.</p>
-        }
-      </mat-card-content>
-    </mat-card>
+  @if (restaurant(); as place) {
+    <header class="public-header">
+      <h1 class="public-header__title">{{ place.name }}</h1>
+      <p class="public-header__location">{{ formatLocation(place) }}</p>
+    </header>
 
-    <mat-card class="rounded-xl">
-      <mat-card-content>
-        @if (stats(); as statsInfo) {
-          <p>
-            Global rate: <strong>{{ statsInfo.globalRateAvg | number: '1.1-2' }}</strong> ({{ statsInfo.ratingsCount }} votes)
-          </p>
-        } @else {
-          <p>Global stats unavailable.</p>
-        }
-      </mat-card-content>
-    </mat-card>
-  </div>
+    <div class="public-hero">
+      <div class="hero-map card-map">
+        <div class="map-wrap">
+          @if (mapEmbedSrc(); as embedSrc) {
+            <iframe
+              [src]="embedSrc"
+              class="map-embed"
+              width="100%"
+              height="200"
+              style="border: 0"
+              tabindex="-1"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              [title]="'Map of ' + place.name"
+            ></iframe>
+            @if (mapsLink(); as href) {
+              <a class="map-open-link" [href]="href" target="_blank" rel="noopener noreferrer">
+                Open in Google Maps
+              </a>
+            }
+          } @else {
+            <p class="map-fallback">No map coordinates for this place.</p>
+          }
+          @if (myRate(); as rate) {
+            <span class="badge badge--public-rate" [attr.aria-label]="'Your rating ' + rate + ' out of 10'">
+              <span class="badge__value">{{ rate | number: '1.0-0' }}</span>
+              <span class="rate-mark-star" aria-hidden="true">★</span>
+            </span>
+          }
+        </div>
+      </div>
 
-  <h2>Opinions</h2>
-  @if (opinions().length === 0) {
-    <p>No opinions yet.</p>
-  } @else {
-    <ul class="opinions" [@staggerOpinions]="opinions().length">
-      @for (item of opinions(); track item.userId + '-' + item.createdAt) {
-        <li class="opinion-item">
-          <p><strong>{{ item.userName }}</strong> rated <strong>{{ item.rate }}</strong></p>
-          <p>{{ item.text }}</p>
-          <small>{{ item.createdAt | date: 'dd/MM/yyyy HH:mm' }}</small>
-        </li>
+      <aside class="hero-stats surface-panel" aria-label="Community rating">
+        @if (hasGlobalRate()) {
+          @if (displayGlobalStats(); as statsInfo) {
+            <p class="hero-stats__label">Global rate</p>
+            <p class="hero-stats__value">
+              <span>{{ statsInfo.globalRateAvg | number: '1.1-2' }}</span>
+              <span class="rate-mark-star rate-mark-star--lg" aria-hidden="true">★</span>
+            </p>
+            <p class="hero-stats__meta">
+              {{ statsInfo.ratingsCount }}
+              {{ statsInfo.ratingsCount === 1 ? 'rating' : 'ratings' }}
+              @if (communityListLimited()) {
+                <span class="hero-stats__note"> (yours only until rules are updated)</span>
+              }
+            </p>
+          }
+        } @else {
+          <p class="hero-stats__empty">No community ratings yet.</p>
+        }
+      </aside>
+    </div>
+
+    <section class="community surface-panel" aria-labelledby="community-heading">
+      <h2 id="community-heading" class="community__title">Community</h2>
+
+      @if (communityListLimited()) {
+        <p class="community__notice" role="status">
+          Comments work, but other people’s ratings are hidden until Firestore rules are published.
+          Copy <strong>firestore.rules</strong> from this project into
+          <a href="https://console.firebase.google.com/project/plate-rate-37417/firestore/rules" target="_blank" rel="noopener noreferrer">Firebase Console → Firestore → Rules</a>
+          and publish, then reload. See <strong>DEPLOY-FIRESTORE-RULES.md</strong>.
+        </p>
       }
-    </ul>
+
+      @if (showMyEmptyPrompt()) {
+        <p class="community__prompt" role="status">{{ myEmptyPrompt() }}</p>
+      }
+
+      @if (canWriteComment()) {
+        <form class="comment-form" (submit)="$event.preventDefault(); submitComment()">
+          <mat-form-field class="surface-field comment-form__field" appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Your opinion</mat-label>
+            <textarea
+              matInput
+              rows="4"
+              [formControl]="commentControl"
+            ></textarea>
+            @if (commentControl.touched && commentControl.hasError('required')) {
+              <mat-error>Please write your opinion.</mat-error>
+            }
+            @if (commentControl.touched && commentControl.hasError('minlength')) {
+              <mat-error>Use at least 3 characters.</mat-error>
+            }
+          </mat-form-field>
+          <button mat-flat-button class="comment-form__submit" type="submit" [disabled]="isSaving()">
+            {{ isSaving() ? 'Saving…' : myCommentText() ? 'Update comment' : 'Post comment' }}
+          </button>
+        </form>
+        @if (saveError()) {
+          <p class="alert-inline" role="alert">{{ saveError() }}</p>
+        }
+      }
+
+      @if (community().length === 0) {
+        <p class="community__empty">Nobody has rated this restaurant yet.</p>
+      } @else {
+        <ul class="community-list" [@staggerEntries]="community().length">
+          @for (entry of community(); track entry.userId) {
+            <li class="community-item">
+              <div class="community-item__header">
+                @if (entry.displayName) {
+                  <span class="community-item__name">{{ entry.displayName }}</span>
+                }
+                @if (entry.userRate != null) {
+                  <span class="community-item__rate" [attr.aria-label]="'Rated ' + entry.userRate + ' out of 10'">
+                    <span class="community-item__rate-number">{{ entry.userRate | number: '1.0-0' }}</span>
+                    <span class="rate-mark-star" aria-hidden="true">★</span>
+                  </span>
+                }
+              </div>
+              @if (entry.commentText) {
+                <p class="community-item__comment">{{ entry.commentText }}</p>
+                @if (entry.commentCreatedAt) {
+                  <time class="community-item__time" [dateTime]="entry.commentCreatedAt">
+                    {{ entry.commentCreatedAt | date: 'dd/MM/yyyy HH:mm' }}
+                  </time>
+                }
+              }
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  } @else if (!loadError()) {
+    <h1 class="public-header__title">Restaurant not found</h1>
   }
 </section>

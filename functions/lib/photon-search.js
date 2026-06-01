@@ -13,8 +13,8 @@ const FOOD_OSM_VALUES = new Set([
     'ice_cream',
     'bakery',
 ]);
-async function searchRestaurantsViaPhoton(query, country, maxResults = 10) {
-    const searchText = `${query.trim()} ${country.trim()}`;
+async function searchRestaurantsViaPhoton(query, city, maxResults = 10) {
+    const searchText = `${query.trim()} ${city.trim()}`;
     const url = new URL(PHOTON_API);
     url.searchParams.set('q', searchText);
     url.searchParams.set('limit', '20');
@@ -28,7 +28,7 @@ async function searchRestaurantsViaPhoton(query, country, maxResults = 10) {
     const foodFirst = [];
     const other = [];
     for (const [index, feature] of (body.features ?? []).entries()) {
-        const suggestion = mapFeature(feature, country, index);
+        const suggestion = mapFeature(feature, city, index);
         if (!suggestion || seen.has(suggestion.id)) {
             continue;
         }
@@ -43,7 +43,7 @@ async function searchRestaurantsViaPhoton(query, country, maxResults = 10) {
     }
     return [...foodFirst, ...other].slice(0, maxResults);
 }
-function mapFeature(feature, countryFallback, index) {
+function mapFeature(feature, cityFallback, index) {
     const name = feature.properties['name']?.trim();
     if (!name) {
         return null;
@@ -56,18 +56,25 @@ function mapFeature(feature, countryFallback, index) {
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
         return null;
     }
-    const country = feature.properties['country']?.trim() || countryFallback.trim();
+    const city = resolveCity(feature.properties, cityFallback);
     const osmId = feature.properties['osm_id'];
     const osmType = feature.properties['osm_type'] ?? 'place';
     const id = osmId !== undefined && osmId !== ''
         ? `${osmType}-${osmId}`
-        : `${name}-${country}-${lng}-${lat}-${index}`;
+        : `${name}-${city}-${lng}-${lat}-${index}`;
     return {
         id,
         name,
-        country,
+        city,
         lat,
         lon: lng,
         placeId: osmId !== undefined && osmId !== '' ? osmId : undefined,
     };
+}
+function resolveCity(properties, cityFallback) {
+    return (properties['city']?.trim() ||
+        properties['town']?.trim() ||
+        properties['district']?.trim() ||
+        properties['municipality']?.trim() ||
+        cityFallback.trim());
 }

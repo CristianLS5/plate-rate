@@ -4,6 +4,7 @@ import { toFirestoreDocumentId } from './firestore-id';
 import { db } from './firebase';
 import { buildMapUrls, resolveStoredMapUrls } from './map-links';
 import type { RestaurantSuggestion, UserRestaurant } from './models';
+import { syncRestaurantRating } from './restaurant-rating-sync';
 
 type FirestoreUserRestaurant = Omit<UserRestaurant, 'id' | 'restaurantId'> & {
   restaurantId?: string;
@@ -24,9 +25,24 @@ export class PersonalListService {
     const snapshot = await getDocs(q);
     const restaurants = snapshot.docs.map((d) => this.mapDocument(d.id, d.data() as FirestoreUserRestaurant));
     this.restaurantsState.set(restaurants);
+    await Promise.all(
+      restaurants.map((row) =>
+        syncRestaurantRating({
+          restaurantId: row.restaurantId,
+          userId: row.userId,
+          userName: row.userName,
+          userRate: row.userRate ?? null,
+        }).catch(() => undefined),
+      ),
+    );
   }
 
-  async addRestaurant(userId: string, restaurant: RestaurantSuggestion, userRate?: number): Promise<void> {
+  async addRestaurant(
+    userId: string,
+    restaurant: RestaurantSuggestion,
+    userRate?: number,
+    userName?: string,
+  ): Promise<void> {
     const restaurantId = toFirestoreDocumentId(restaurant.id);
     const generated = buildMapUrls(restaurant);
     const mapUrls = {
@@ -48,6 +64,8 @@ export class PersonalListService {
     const restaurantRef = doc(db, 'restaurants', restaurantId);
     await setDoc(restaurantRef, sharedFields, { merge: true });
 
+    const trimmedUserName = userName?.trim() || undefined;
+
     const userRestaurant: Omit<UserRestaurant, 'id'> = {
       userId,
       restaurantId,
@@ -56,12 +74,21 @@ export class PersonalListService {
       lon: restaurant.lon,
       mapsUrl: mapUrls.mapsUrl,
       mapsEmbedUrl: mapUrls.mapsEmbedUrl,
+      userName: trimmedUserName,
       userRate: userRate ?? undefined,
       addedAt: new Date().toISOString(),
     };
 
     const addedRef = await addDoc(collection(db, 'userRestaurants'), {
       ...userRestaurant,
+      userName: trimmedUserName ?? null,
+      userRate: userRate ?? null,
+    });
+
+    await syncRestaurantRating({
+      restaurantId,
+      userId,
+      userName: trimmedUserName,
       userRate: userRate ?? null,
     });
 
@@ -90,6 +117,7 @@ export class PersonalListService {
       restaurantId: data.restaurantId ?? id,
       city: data.city ?? '',
       country: data.country ?? undefined,
+      userName: data.userName?.trim() || undefined,
       mapsUrl: mapUrls.mapsUrl,
       mapsEmbedUrl: mapUrls.mapsEmbedUrl,
     };

@@ -48,7 +48,7 @@ firebase emulators:start --only functions,firestore
   - Table View (name, country, rate, added date)
 - Filters by name/country.
 - Sort by name, country, rate, and date (table).
-- Public detail shows your rate, global average, and opinions sorted by rate/date.
+- Public detail shows place info, map, your list rating, community average (from list ratings), and text-only comments. Names appear only when a user has rated; display names are stored on save (`userName` from Google).
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a id="readme-top"></a>
 <!--

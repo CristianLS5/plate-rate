@@ -10,7 +10,7 @@
       <input matInput type="text" [formControl]="searchControl" />
     </mat-form-field>
     <mat-form-field class="surface-field" appearance="outline" subscriptSizing="dynamic">
-      <mat-label>Your rate (optional 0-10)</mat-label>
+      <mat-label>Your rate (0–10)</mat-label>
       <input matInput type="number" min="0" max="10" [formControl]="rateControl" />
     </mat-form-field>
     <button mat-flat-button class="add-form__submit" type="submit" [disabled]="!canSubmitAdd()">

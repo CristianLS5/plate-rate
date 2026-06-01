@@ -13,11 +13,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs';
 import { AuthService } from '../core/auth.service';
+import { displayNameFromAuthUser } from '../core/display-name';
 import type { RestaurantSuggestion, UserRestaurant } from '../core/models';
 import { PersonalListService } from '../core/personal-list.service';
 import { isRestaurantAlreadyInList } from '../core/restaurant-match';
 import { rateAriaLabel, rateLabel, rateTone, type RateTone } from '../core/rate-tone';
 import { RestaurantSearchService } from '../core/restaurant-search.service';
+import { hasUserRate, parseUserRate } from '../core/user-rate';
 
 type ViewMode = 'card' | 'table';
 type SortKey = 'name' | 'city' | 'rate' | 'date';
@@ -69,6 +71,11 @@ export class PersonalPage {
   readonly addCityControl = new FormControl('', { nonNullable: true });
   readonly rateControl = new FormControl<number | null>(null);
 
+  private readonly rateValue = toSignal(
+    this.rateControl.valueChanges.pipe(startWith(this.rateControl.value)),
+    { initialValue: this.rateControl.value },
+  );
+
   private readonly listSearchRaw = toSignal(
     this.listSearch.valueChanges.pipe(startWith(this.listSearch.value), debounceTime(200)),
     { initialValue: '' },
@@ -99,7 +106,7 @@ export class PersonalPage {
     if (!this.authService.user()?.uid || !candidate || this.isSubmitting()) {
       return false;
     }
-    return !this.isAlreadyInList(candidate);
+    return !this.isAlreadyInList(candidate) && hasUserRate(this.rateValue());
   });
 
   constructor() {
@@ -166,10 +173,19 @@ export class PersonalPage {
       this.addError.set('This restaurant is already in your list.');
       return;
     }
+    const rate = parseUserRate(this.rateValue());
+    if (rate == null) {
+      return;
+    }
     this.isSubmitting.set(true);
     this.addError.set('');
     try {
-      await this.listService.addRestaurant(userId, suggestion, this.rateControl.value ?? undefined);
+      await this.listService.addRestaurant(
+        userId,
+        suggestion,
+        rate,
+        displayNameFromAuthUser(this.authService.user()),
+      );
       this.selectedSuggestion.set(null);
       this.suggestions.set([]);
       this.searchControl.setValue('');

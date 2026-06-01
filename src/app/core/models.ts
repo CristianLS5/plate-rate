@@ -15,17 +15,20 @@ export interface Restaurant {
 export interface UserRestaurant extends Restaurant {
   userId: string;
   restaurantId: string;
+  /** Snapshot of display name when the place was saved (preferred for public lists). */
+  userName?: string;
   userRate?: number;
   addedAt: string;
 }
 
+/** Written commentary only; does not affect rating averages. */
 export interface Opinion {
   restaurantId: string;
   userId: string;
   userName: string;
-  rate: number;
   text: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface RestaurantStats {
@@ -44,4 +47,15 @@ export interface RestaurantSuggestion {
   placeId?: string;
   lat?: number;
   lon?: number;
+}
+
+/** Merged public row: rating from `userRestaurants`, optional text from `opinions`. */
+export interface CommunityEntry {
+  userId: string;
+  /** Set only when the user saved a numeric rating on their list. */
+  userRate?: number;
+  displayName?: string;
+  commentText?: string;
+  commentCreatedAt?: string;
+  isCurrentUser: boolean;
 }

@@ -25,16 +25,11 @@ export const searchRestaurants = onRequest({ cors: true, timeoutSeconds: 30 }, a
   }
 });
 
-export const aggregateRestaurantStats = onDocumentWritten('opinions/{opinionId}', async (event) => {
-  const after = event.data?.after.data();
-  const before = event.data?.before.data();
-  const restaurantId = String(after?.restaurantId ?? before?.restaurantId ?? '');
-  if (!restaurantId) {
-    return;
-  }
-
-  const snapshot = await db.collection('opinions').where('restaurantId', '==', restaurantId).get();
-  const rates = snapshot.docs.map((doc) => Number(doc.data().rate)).filter((value) => Number.isFinite(value));
+async function recomputeRestaurantStats(restaurantId: string): Promise<void> {
+  const snapshot = await db.collection('userRestaurants').where('restaurantId', '==', restaurantId).get();
+  const rates = snapshot.docs
+    .map((doc) => Number(doc.data().userRate))
+    .filter((value) => Number.isFinite(value));
   const ratingsCount = rates.length;
   const globalRateAvg = ratingsCount > 0 ? rates.reduce((sum, value) => sum + value, 0) / ratingsCount : 0;
 
@@ -46,4 +41,17 @@ export const aggregateRestaurantStats = onDocumentWritten('opinions/{opinionId}'
     },
     { merge: true },
   );
-});
+}
+
+export const aggregateRestaurantStats = onDocumentWritten(
+  'userRestaurants/{entryId}',
+  async (event) => {
+    const after = event.data?.after.data();
+    const before = event.data?.before.data();
+    const restaurantId = String(after?.restaurantId ?? before?.restaurantId ?? '');
+    if (!restaurantId) {
+      return;
+    }
+    await recomputeRestaurantStats(restaurantId);
+  },
+);
