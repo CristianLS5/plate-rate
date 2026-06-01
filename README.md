@@ -82,7 +82,7 @@ firebase emulators:start --only functions,firestore
 <br />
 <div align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="public/dark_brand_icon.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Best-README-Template</h3>
@@ -134,7 +134,7 @@ firebase emulators:start --only functions,firestore
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[![Product Name Screen Shot][public/dark_brand_icon]](https://example.com)
 
 There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
 
