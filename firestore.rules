@@ -1,0 +1,48 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwnerUid(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    match /restaurants/{restaurantId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /userRestaurants/{docId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    match /restaurantRatings/{entryId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    match /opinions/{docId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.restaurantId is string
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0;
+      allow update: if isSignedIn()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    match /restaurantStats/{restaurantId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+  }
+}

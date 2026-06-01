@@ -1,1 +1,334 @@
-/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root,
+[data-theme='light'] {
+  --construct-field-height: 2.75rem;
+  --page-bg: #ffffff;
+  --page-text: #0f172a;
+  --text-muted: #64748b;
+  --page-link: #2563eb;
+  --page-link-hover: #1d4ed8;
+  --app-shell-bg: #ffffff;
+  --topbar-bg: #f1f5f9;
+  --topbar-border: #e2e8f0;
+  --topbar-shadow: 0 1px 3px rgb(15 23 42 / 6%);
+  --surface-panel: #f1f5f9;
+  --surface-panel-border: #e2e8f0;
+  --text-on-surface: #0f172a;
+  --surface-card: #ffffff;
+  --surface-ring: #e2e8f0;
+  --brand-icon-color: #334155;
+  --btn-primary: #5b21b6;
+  --btn-primary-hover: #6d28d9;
+  --btn-primary-active: #4c1d95;
+  --btn-primary-text: #ffffff;
+  --btn-primary-shadow: rgb(91 33 182 / 0.35);
+  --btn-primary-shadow-hover: rgb(91 33 182 / 0.45);
+  --btn-tint-hover: rgb(91 33 182 / 0.1);
+  --segment-track: #e2e8f0;
+  --segment-text: #475569;
+  --select-panel-bg: #ffffff;
+  --select-panel-border: #e2e8f0;
+  --select-option-selected-bg: rgb(91 33 182 / 0.12);
+  --select-option-selected-text: #5b21b6;
+  --accent-purple: #7c3aed;
+  --card-purple-from: #6d28d9;
+  --card-purple-mid: #5b21b6;
+  --card-purple-to: #4c1d95;
+  --card-map-bg: #3b0764;
+}
+
+[data-theme='dark'] {
+  --page-bg: #0f172a;
+  --page-text: #f8fafc;
+  --text-muted: #94a3b8;
+  --page-link: #60a5fa;
+  --page-link-hover: #93c5fd;
+  --app-shell-bg: #0f172a;
+  --topbar-bg: #1e293b;
+  --topbar-border: #334155;
+  --topbar-shadow: 0 4px 16px rgb(0 0 0 / 35%);
+  --surface-panel: #1e293b;
+  --surface-panel-border: #334155;
+  --text-on-surface: #f8fafc;
+  --surface-card: #1e293b;
+  --surface-ring: #334155;
+  --brand-icon-color: #f8fafc;
+  --btn-primary: #7c3aed;
+  --btn-primary-hover: #8b5cf6;
+  --btn-primary-active: #6d28d9;
+  --btn-primary-text: #ffffff;
+  --btn-primary-shadow: rgb(124 58 237 / 0.4);
+  --btn-primary-shadow-hover: rgb(124 58 237 / 0.5);
+  --btn-tint-hover: rgb(124 58 237 / 0.15);
+  --segment-track: #334155;
+  --segment-text: #cbd5e1;
+  --select-panel-bg: #1e293b;
+  --select-panel-border: #475569;
+  --select-option-selected-bg: rgb(124 58 237 / 0.22);
+  --select-option-selected-text: #c4b5fd;
+  --accent-purple: #a78bfa;
+  --card-purple-from: #5b21b6;
+  --card-purple-mid: #4c1d95;
+  --card-purple-to: #312e81;
+  --card-map-bg: #2e1065;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+  background: var(--page-bg);
+  color: var(--page-text);
+  transition:
+    background-color 220ms ease,
+    color 220ms ease;
+}
+
+.mat-mdc-form-field,
+.mat-mdc-select,
+.mat-mdc-option,
+.mat-mdc-button,
+.mat-mdc-outlined-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-button-toggle,
+.mat-mdc-button-toggle-group,
+.mat-toolbar,
+.mat-mdc-select-panel {
+  font-family: 'Nunito', system-ui, -apple-system, sans-serif !important;
+}
+
+a {
+  color: var(--page-link);
+  transition: color 180ms ease-in-out;
+}
+
+a:hover {
+  color: var(--page-link-hover);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.surface-panel {
+  padding: 1rem;
+  border-radius: 1rem;
+  background: var(--surface-panel);
+  border: 1px solid var(--surface-panel-border);
+  color: var(--text-on-surface);
+  transition:
+    background-color 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease;
+}
+
+.surface-field {
+  font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+
+  --mat-form-field-outlined-input-text-color: var(--text-on-surface);
+  --mat-form-field-outlined-label-text-color: var(--text-muted);
+  --mat-form-field-outlined-focus-label-text-color: var(--btn-primary);
+  --mat-form-field-outlined-focus-outline-color: var(--btn-primary);
+  --mat-form-field-outlined-hover-outline-color: var(--btn-primary-hover);
+  --mat-form-field-outlined-outline-color: var(--surface-panel-border);
+  --mat-select-enabled-trigger-text-color: var(--text-on-surface);
+  --mat-select-enabled-arrow-color: var(--text-muted);
+  --mdc-outlined-text-field-input-text-color: var(--text-on-surface);
+  --mdc-outlined-text-field-label-text-color: var(--text-muted);
+  --mdc-outlined-text-field-focus-label-text-color: var(--btn-primary);
+  --mdc-outlined-text-field-hover-label-text-color: var(--text-muted);
+  --mdc-outlined-text-field-outline-color: var(--surface-panel-border);
+  --mdc-outlined-text-field-hover-outline-color: var(--btn-primary-hover);
+  --mdc-outlined-text-field-focus-outline-color: var(--btn-primary);
+  --mdc-outlined-text-field-caret-color: var(--btn-primary);
+
+  .mat-mdc-input-element,
+  .mdc-text-field__input {
+    font-family: inherit;
+    color: var(--text-on-surface) !important;
+    caret-color: var(--btn-primary);
+  }
+
+  .mat-mdc-input-element::placeholder,
+  .mdc-text-field__input::placeholder {
+    color: var(--text-muted) !important;
+    opacity: 1;
+  }
+
+  .mat-mdc-floating-label,
+  .mdc-floating-label {
+    font-family: inherit;
+    color: var(--text-muted) !important;
+  }
+
+  &:hover .mat-mdc-input-element,
+  &:hover .mdc-text-field__input,
+  .mdc-text-field--hovered .mat-mdc-input-element,
+  .mdc-text-field--hovered .mdc-text-field__input {
+    color: var(--text-on-surface) !important;
+  }
+
+  &:hover .mat-mdc-floating-label,
+  &:hover .mdc-floating-label,
+  .mdc-text-field--hovered:not(.mdc-text-field--focused) .mdc-floating-label,
+  .mdc-text-field--hovered:not(.mdc-text-field--focused) .mat-mdc-floating-label {
+    color: var(--text-muted) !important;
+  }
+
+  &.mat-focused .mat-mdc-floating-label,
+  &.mat-focused .mdc-floating-label,
+  .mdc-text-field--focused .mdc-floating-label {
+    color: var(--btn-primary) !important;
+  }
+
+  .mat-mdc-select-value,
+  .mat-mdc-select-min-line {
+    font-family: inherit;
+    color: var(--text-on-surface) !important;
+  }
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.segmented-control {
+  display: flex;
+  width: 100%;
+  height: var(--construct-field-height);
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 1px solid var(--surface-panel-border) !important;
+  background: var(--segment-track);
+
+  .mat-button-toggle {
+    flex: 1;
+    height: 100%;
+    color: var(--segment-text);
+    background: transparent;
+    border: none !important;
+  }
+
+  .mat-button-toggle-button {
+    width: 100%;
+    height: 100%;
+    padding-inline: 0.75rem;
+  }
+
+  .mat-button-toggle-label-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    line-height: 1.2;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .mat-button-toggle:not(.mat-button-toggle-checked):hover {
+    color: var(--text-on-surface);
+    background: var(--btn-tint-hover);
+  }
+
+  .mat-button-toggle-checked {
+    color: var(--btn-primary-text) !important;
+    background: var(--btn-primary) !important;
+  }
+
+  .mat-button-toggle-checked .mat-button-toggle-button:hover {
+    background: var(--btn-primary-hover) !important;
+  }
+
+  .mat-button-toggle-checked:active {
+    background: var(--btn-primary-active) !important;
+  }
+}
+
+.segmented-control--icons {
+  width: auto;
+  min-width: 5.5rem;
+  height: 2.5rem;
+
+  .mat-button-toggle-label-content {
+    line-height: 1;
+  }
+
+  .mat-icon {
+    font-size: 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+.toolbar-select-panel.mat-mdc-select-panel {
+  border-radius: 1rem;
+  padding: 0.35rem;
+  background: var(--select-panel-bg);
+  border: 1px solid var(--select-panel-border);
+  box-shadow: 0 12px 32px rgb(15 23 42 / 12%);
+  transform-origin: top center;
+  animation: select-panel-in 220ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  .mat-mdc-option {
+    border-radius: 0.65rem;
+    color: var(--text-on-surface);
+
+    &.mdc-list-item--selected {
+      background: var(--select-option-selected-bg);
+      color: var(--select-option-selected-text);
+    }
+
+    &:hover:not(.mdc-list-item--disabled) {
+      background: var(--btn-tint-hover);
+    }
+  }
+}
+
+@keyframes select-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.mat-mdc-outlined-button:not(:disabled):hover {
+  color: var(--text-on-surface) !important;
+  border-color: var(--btn-primary-hover) !important;
+  background: var(--btn-tint-hover) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

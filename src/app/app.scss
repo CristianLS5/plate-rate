@@ -1,0 +1,59 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  background: var(--app-shell-bg);
+  transition: background 220ms ease;
+}
+
+.topbar {
+  --mat-toolbar-container-background-color: var(--topbar-bg);
+  --mat-toolbar-container-text-color: var(--text-on-surface);
+  gap: 0.75rem;
+  background: var(--topbar-bg) !important;
+  color: var(--text-on-surface) !important;
+  border-bottom: 1px solid var(--topbar-border);
+  box-shadow: var(--topbar-shadow);
+  transition:
+    background-color 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-decoration: none;
+  color: var(--text-on-surface);
+  transition: color 180ms ease;
+
+  font-family: inherit;
+
+  &:hover {
+    color: var(--btn-primary-hover);
+  }
+}
+
+.brand__icon {
+  display: block;
+  object-fit: contain;
+}
+
+.brand__text {
+  letter-spacing: 0.01em;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.theme-toggle {
+  margin-inline-end: 0.25rem;
+}
+
+.logout-btn {
+  color: var(--text-on-surface) !important;
+  border-color: var(--surface-panel-border) !important;
+}

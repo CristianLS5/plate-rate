@@ -8,6 +8,8 @@
 
 # Node
 /node_modules
+/functions/node_modules
+/functions/.env
 npm-debug.log
 yarn-error.log
 
@@ -19,15 +21,13 @@ yarn-error.log
 *.launch
 .settings/
 *.sublime-workspace
-
-# Visual Studio Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/mcp.json
+.cursor/
+.vscode/
 .history/*
+
+# README templates (not used in this project)
+README.template.md
+BLANK_README.md
 
 # Miscellaneous
 /.angular/cache
