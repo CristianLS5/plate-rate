@@ -1,5 +1,5 @@
 export const environment = {
-  production: false,
+  production: true,
   firebase: {
     apiKey: "AIzaSyANnlYLzgZNjkUWwXqhzQQStw5yzd_qDB8",
     authDomain: "plate-rate-37417.firebaseapp.com",
@@ -9,6 +9,5 @@ export const environment = {
     appId: "1:313967022074:web:44a930a9417376e8029e43",
     measurementId: "G-29KEE14Z4W"
   },
-  /** Optional Firebase Functions URL to proxy Photon search. */
   apiBaseUrl: '',
 };
