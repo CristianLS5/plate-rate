@@ -29,17 +29,16 @@
   color: var(--text-on-surface);
   transition: color 180ms ease;
 
+  font-family: inherit;
+
   &:hover {
-    color: var(--page-link);
+    color: var(--btn-primary-hover);
   }
 }
 
 .brand__icon {
   display: block;
-}
-
-[data-theme='dark'] .brand__icon {
-  filter: brightness(0) invert(1);
+  object-fit: contain;
 }
 
 .brand__text {

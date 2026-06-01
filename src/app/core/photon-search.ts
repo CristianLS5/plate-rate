@@ -1,3 +1,4 @@
+import { buildMapUrls } from './map-links';
 import type { RestaurantSuggestion } from './models';
 
 const PHOTON_API = 'https://photon.komoot.io/api/';
@@ -91,6 +92,7 @@ function mapFeatureToSuggestion(
   }
 
   const city = resolveCity(feature.properties, cityFallback);
+  const country = feature.properties['country']?.trim() || undefined;
   const osmId = feature.properties['osm_id'];
   const osmType = feature.properties['osm_type'] ?? 'place';
   const id =
@@ -98,13 +100,19 @@ function mapFeatureToSuggestion(
       ? `${osmType}-${osmId}`
       : `${name}-${city}-${lng}-${lat}-${index}`;
 
-  return {
+  const base = {
     id,
     name,
     city,
+    country,
     lat,
     lon: lng,
     placeId: osmId !== undefined && osmId !== '' ? osmId : undefined,
+  };
+
+  return {
+    ...base,
+    ...buildMapUrls(base),
   };
 }
 

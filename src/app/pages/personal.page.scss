@@ -11,15 +11,6 @@
   width: 100%;
 
   --mdc-outlined-text-field-container-color: transparent;
-  --mdc-outlined-text-field-outline-color: var(--surface-panel-border);
-  --mdc-outlined-text-field-hover-outline-color: var(--page-link);
-  --mdc-outlined-text-field-focus-outline-color: var(--btn-primary);
-  --mdc-outlined-text-field-label-text-color: var(--text-muted);
-  --mdc-outlined-text-field-focus-label-text-color: var(--btn-primary);
-  --mdc-outlined-text-field-input-text-color: var(--text-on-surface);
-  --mdc-outlined-text-field-caret-color: var(--btn-primary);
-  --mat-select-enabled-trigger-text-color: var(--text-on-surface);
-  --mat-select-enabled-arrow-color: var(--text-muted);
 
   .mat-mdc-form-field-subscript-wrapper {
     display: none;
@@ -42,11 +33,12 @@
   border-radius: 9999px;
   color: var(--btn-primary-text) !important;
   background: var(--btn-primary) !important;
-  box-shadow: 0 4px 14px rgb(37 99 235 / 0.35);
+  font-family: inherit;
+  box-shadow: 0 4px 14px var(--btn-primary-shadow);
 
   &:hover:not([disabled]) {
     background: var(--btn-primary-hover) !important;
-    box-shadow: 0 6px 18px rgb(37 99 235 / 0.4);
+    box-shadow: 0 6px 18px var(--btn-primary-shadow-hover);
   }
 
   &:active:not([disabled]) {
@@ -104,6 +96,12 @@
   color: var(--text-on-surface);
 
   &::placeholder {
+    color: var(--text-muted);
+    opacity: 1;
+  }
+
+  &:hover::placeholder,
+  &:focus::placeholder {
     color: var(--text-muted);
   }
 
@@ -187,10 +185,11 @@
   padding-top: 0.35rem;
   padding-bottom: 0.35rem;
   color: var(--text-on-surface) !important;
+  font-family: inherit;
 
   &:hover:not([disabled]) {
-    background: rgb(37 99 235 / 0.08) !important;
-    color: var(--page-link) !important;
+    background: var(--btn-tint-hover) !important;
+    color: var(--btn-primary-hover) !important;
   }
 }
 
@@ -354,9 +353,11 @@ td {
 .table-link {
   color: var(--page-link) !important;
 
+  font-family: inherit;
+
   &:hover {
-    color: var(--page-link-hover) !important;
-    background: rgb(37 99 235 / 0.08) !important;
+    color: var(--btn-primary-hover) !important;
+    background: var(--btn-tint-hover) !important;
   }
 }
 

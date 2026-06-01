@@ -13,7 +13,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs';
 import { AuthService } from '../core/auth.service';
-import { googleMapsEmbedUrl, googleMapsUrl, hasCoordinates } from '../core/map-links';
 import type { RestaurantSuggestion, UserRestaurant } from '../core/models';
 import { PersonalListService } from '../core/personal-list.service';
 import { isRestaurantAlreadyInList } from '../core/restaurant-match';
@@ -87,7 +86,7 @@ export class PersonalPage {
       if (!q) {
         return true;
       }
-      const haystack = `${item.name} ${item.city}`.toLowerCase();
+      const haystack = `${item.name} ${item.city} ${item.country ?? ''}`.toLowerCase();
       return haystack.includes(q);
     });
     return [...list].sort((a, b) => this.compare(a, b, key));
@@ -188,25 +187,29 @@ export class PersonalPage {
     return isRestaurantAlreadyInList(this.restaurants(), suggestion);
   }
 
+  formatLocation(item: { city: string; country?: string }): string {
+    const city = item.city.trim();
+    const country = item.country?.trim();
+    return country ? `${city}, ${country}` : city;
+  }
+
   mapEmbedSrc(item: UserRestaurant): SafeResourceUrl | null {
-    if (!hasCoordinates(item)) {
+    const embedUrl = item.mapsEmbedUrl?.trim();
+    if (!embedUrl) {
       return null;
     }
     const cached = this.mapEmbedCache.get(item.restaurantId);
     if (cached) {
       return cached;
     }
-    const url = googleMapsEmbedUrl(item.lat, item.lon, item.name);
-    const safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    const safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
     this.mapEmbedCache.set(item.restaurantId, safeUrl);
     return safeUrl;
   }
 
   mapsLink(item: UserRestaurant): string | null {
-    if (!hasCoordinates(item)) {
-      return null;
-    }
-    return googleMapsUrl(item.lat, item.lon, item.name);
+    const url = item.mapsUrl?.trim();
+    return url || null;
   }
 
   readonly rateTone = rateTone;

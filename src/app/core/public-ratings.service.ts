@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { db } from './firebase';
+import { resolveStoredMapUrls } from './map-links';
 import type { Opinion, Restaurant, RestaurantStats } from './models';
 
 @Injectable({ providedIn: 'root' })
@@ -10,11 +11,26 @@ export class PublicRatingsService {
     if (!snapshot.exists()) {
       return null;
     }
-    const data = snapshot.data() as Omit<Restaurant, 'id' | 'city'> & { country?: string; city?: string };
+    const data = snapshot.data() as Omit<Restaurant, 'id'> & {
+      country?: string;
+      imageUrl?: string;
+    };
+    const mapUrls = resolveStoredMapUrls({
+      mapsUrl: data.mapsUrl,
+      mapsEmbedUrl: data.mapsEmbedUrl,
+      imageUrl: data.imageUrl,
+      lat: data.lat,
+      lon: data.lon,
+      name: data.name,
+    });
+
     return {
       id: snapshot.id,
       ...data,
-      city: data.city ?? data.country ?? '',
+      city: data.city ?? '',
+      country: data.country ?? undefined,
+      mapsUrl: mapUrls.mapsUrl,
+      mapsEmbedUrl: mapUrls.mapsEmbedUrl,
     };
   }
 

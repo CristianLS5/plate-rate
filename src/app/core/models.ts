@@ -2,7 +2,11 @@ export interface Restaurant {
   id: string;
   name: string;
   city: string;
+  country?: string;
+  /** @deprecated Use mapsEmbedUrl. Legacy documents may still have embed URLs here. */
   imageUrl?: string;
+  mapsUrl?: string;
+  mapsEmbedUrl?: string;
   placeId?: string;
   lat?: number;
   lon?: number;
@@ -34,7 +38,9 @@ export interface RestaurantSuggestion {
   id: string;
   name: string;
   city: string;
-  imageUrl?: string;
+  country?: string;
+  mapsUrl?: string;
+  mapsEmbedUrl?: string;
   placeId?: string;
   lat?: number;
   lon?: number;

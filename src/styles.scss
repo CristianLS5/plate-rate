@@ -21,16 +21,19 @@
   --surface-card: #ffffff;
   --surface-ring: #e2e8f0;
   --brand-icon-color: #334155;
-  --btn-primary: #2563eb;
-  --btn-primary-hover: #1d4ed8;
-  --btn-primary-active: #1e40af;
+  --btn-primary: #5b21b6;
+  --btn-primary-hover: #6d28d9;
+  --btn-primary-active: #4c1d95;
   --btn-primary-text: #ffffff;
+  --btn-primary-shadow: rgb(91 33 182 / 0.35);
+  --btn-primary-shadow-hover: rgb(91 33 182 / 0.45);
+  --btn-tint-hover: rgb(91 33 182 / 0.1);
   --segment-track: #e2e8f0;
   --segment-text: #475569;
   --select-panel-bg: #ffffff;
   --select-panel-border: #e2e8f0;
-  --select-option-selected-bg: rgb(37 99 235 / 0.12);
-  --select-option-selected-text: #2563eb;
+  --select-option-selected-bg: rgb(91 33 182 / 0.12);
+  --select-option-selected-text: #5b21b6;
   --accent-purple: #7c3aed;
   --card-purple-from: #6d28d9;
   --card-purple-mid: #5b21b6;
@@ -54,16 +57,19 @@
   --surface-card: #1e293b;
   --surface-ring: #334155;
   --brand-icon-color: #f8fafc;
-  --btn-primary: #3b82f6;
-  --btn-primary-hover: #60a5fa;
-  --btn-primary-active: #2563eb;
+  --btn-primary: #7c3aed;
+  --btn-primary-hover: #8b5cf6;
+  --btn-primary-active: #6d28d9;
   --btn-primary-text: #ffffff;
+  --btn-primary-shadow: rgb(124 58 237 / 0.4);
+  --btn-primary-shadow-hover: rgb(124 58 237 / 0.5);
+  --btn-tint-hover: rgb(124 58 237 / 0.15);
   --segment-track: #334155;
   --segment-text: #cbd5e1;
   --select-panel-bg: #1e293b;
   --select-panel-border: #475569;
-  --select-option-selected-bg: rgb(59 130 246 / 0.2);
-  --select-option-selected-text: #93c5fd;
+  --select-option-selected-bg: rgb(124 58 237 / 0.22);
+  --select-option-selected-text: #c4b5fd;
   --accent-purple: #a78bfa;
   --card-purple-from: #5b21b6;
   --card-purple-mid: #4c1d95;
@@ -88,6 +94,19 @@ body {
   transition:
     background-color 220ms ease,
     color 220ms ease;
+}
+
+.mat-mdc-form-field,
+.mat-mdc-select,
+.mat-mdc-option,
+.mat-mdc-button,
+.mat-mdc-outlined-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-button-toggle,
+.mat-mdc-button-toggle-group,
+.mat-toolbar,
+.mat-mdc-select-panel {
+  font-family: 'Nunito', system-ui, -apple-system, sans-serif !important;
 }
 
 a {
@@ -121,6 +140,76 @@ a:hover {
     background-color 220ms ease,
     border-color 220ms ease,
     color 220ms ease;
+}
+
+.surface-field {
+  font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+
+  --mat-form-field-outlined-input-text-color: var(--text-on-surface);
+  --mat-form-field-outlined-label-text-color: var(--text-muted);
+  --mat-form-field-outlined-focus-label-text-color: var(--btn-primary);
+  --mat-form-field-outlined-focus-outline-color: var(--btn-primary);
+  --mat-form-field-outlined-hover-outline-color: var(--btn-primary-hover);
+  --mat-form-field-outlined-outline-color: var(--surface-panel-border);
+  --mat-select-enabled-trigger-text-color: var(--text-on-surface);
+  --mat-select-enabled-arrow-color: var(--text-muted);
+  --mdc-outlined-text-field-input-text-color: var(--text-on-surface);
+  --mdc-outlined-text-field-label-text-color: var(--text-muted);
+  --mdc-outlined-text-field-focus-label-text-color: var(--btn-primary);
+  --mdc-outlined-text-field-hover-label-text-color: var(--text-muted);
+  --mdc-outlined-text-field-outline-color: var(--surface-panel-border);
+  --mdc-outlined-text-field-hover-outline-color: var(--btn-primary-hover);
+  --mdc-outlined-text-field-focus-outline-color: var(--btn-primary);
+  --mdc-outlined-text-field-caret-color: var(--btn-primary);
+
+  .mat-mdc-input-element,
+  .mdc-text-field__input {
+    font-family: inherit;
+    color: var(--text-on-surface) !important;
+    caret-color: var(--btn-primary);
+  }
+
+  .mat-mdc-input-element::placeholder,
+  .mdc-text-field__input::placeholder {
+    color: var(--text-muted) !important;
+    opacity: 1;
+  }
+
+  .mat-mdc-floating-label,
+  .mdc-floating-label {
+    font-family: inherit;
+    color: var(--text-muted) !important;
+  }
+
+  &:hover .mat-mdc-input-element,
+  &:hover .mdc-text-field__input,
+  .mdc-text-field--hovered .mat-mdc-input-element,
+  .mdc-text-field--hovered .mdc-text-field__input {
+    color: var(--text-on-surface) !important;
+  }
+
+  &:hover .mat-mdc-floating-label,
+  &:hover .mdc-floating-label,
+  .mdc-text-field--hovered:not(.mdc-text-field--focused) .mdc-floating-label,
+  .mdc-text-field--hovered:not(.mdc-text-field--focused) .mat-mdc-floating-label {
+    color: var(--text-muted) !important;
+  }
+
+  &.mat-focused .mat-mdc-floating-label,
+  &.mat-focused .mdc-floating-label,
+  .mdc-text-field--focused .mdc-floating-label {
+    color: var(--btn-primary) !important;
+  }
+
+  .mat-mdc-select-value,
+  .mat-mdc-select-min-line {
+    font-family: inherit;
+    color: var(--text-on-surface) !important;
+  }
+}
+
+.text-muted {
+  color: var(--text-muted);
 }
 
 .segmented-control {
@@ -158,7 +247,7 @@ a:hover {
 
   .mat-button-toggle:not(.mat-button-toggle-checked):hover {
     color: var(--text-on-surface);
-    background: rgb(37 99 235 / 0.08);
+    background: var(--btn-tint-hover);
   }
 
   .mat-button-toggle-checked {
@@ -210,7 +299,7 @@ a:hover {
     }
 
     &:hover:not(.mdc-list-item--disabled) {
-      background: rgb(37 99 235 / 0.08);
+      background: var(--btn-tint-hover);
     }
   }
 }
@@ -229,8 +318,8 @@ a:hover {
 
 .mat-mdc-outlined-button:not(:disabled):hover {
   color: var(--text-on-surface) !important;
-  border-color: var(--page-link) !important;
-  background: rgb(37 99 235 / 0.06) !important;
+  border-color: var(--btn-primary-hover) !important;
+  background: var(--btn-tint-hover) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

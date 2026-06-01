@@ -19,7 +19,7 @@ export class ThemeService {
   }
 
   brandIconPath(): string {
-    return 'brand-icon.svg';
+    return this.theme() === 'dark' ? 'dark_brand_icon.png' : 'light_brand_icon.png';
   }
 
   private apply(theme: AppTheme): void {

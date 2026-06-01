@@ -19,3 +19,49 @@ export function googleMapsUrl(lat: number, lon: number, name?: string): string {
 export function hasCoordinates(item: { lat?: number; lon?: number }): item is { lat: number; lon: number } {
   return Number.isFinite(item.lat) && Number.isFinite(item.lon);
 }
+
+export interface MapUrlFields {
+  mapsUrl?: string;
+  mapsEmbedUrl?: string;
+}
+
+export function buildMapUrls(item: {
+  lat?: number;
+  lon?: number;
+  name?: string;
+}): MapUrlFields {
+  const name = item.name;
+  if (!hasCoordinates(item)) {
+    return {};
+  }
+  return {
+    mapsUrl: googleMapsUrl(item.lat, item.lon, name),
+    mapsEmbedUrl: googleMapsEmbedUrl(item.lat, item.lon, name),
+  };
+}
+
+/** Resolve stored map fields from Firestore, including legacy `imageUrl` embeds. */
+export function resolveStoredMapUrls(data: {
+  mapsUrl?: string;
+  mapsEmbedUrl?: string;
+  imageUrl?: string;
+  lat?: number;
+  lon?: number;
+  name?: string;
+}): MapUrlFields {
+  const mapsUrl = data.mapsUrl?.trim() || undefined;
+  const legacyEmbed = data.imageUrl?.trim();
+  const mapsEmbedUrl =
+    data.mapsEmbedUrl?.trim() ||
+    (legacyEmbed && legacyEmbed.includes('google.com/maps') ? legacyEmbed : undefined);
+
+  if (mapsUrl && mapsEmbedUrl) {
+    return { mapsUrl, mapsEmbedUrl };
+  }
+
+  const generated = buildMapUrls(data);
+  return {
+    mapsUrl: mapsUrl ?? generated.mapsUrl,
+    mapsEmbedUrl: mapsEmbedUrl ?? generated.mapsEmbedUrl,
+  };
+}
