@@ -65,6 +65,8 @@
 
 [![Plate Rate][product-screenshot]](https://github.com/CristianLS5/plate-rate)
 
+There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
+
 **Plate Rate** helps you build a personal list of restaurants you have visited, rate them on your own scale, and see how your scores compare with other users who saved the same place.
 
 Why this project:
@@ -261,7 +263,7 @@ Project link: [https://github.com/CristianLS5/plate-rate](https://github.com/Cri
 [license-url]: https://github.com/CristianLS5/plate-rate/blob/main/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/cristian-l%C3%B3pez-sol%C3%A1-2b6493204/?locale=en_US
-[product-screenshot]: public/plate-rate.png
+[product-screenshot]: public/plate_rate.png
 [Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
 [Angular-url]: https://angular.dev/
 [Firebase.com]: https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white
