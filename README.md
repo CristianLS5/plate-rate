@@ -1,74 +1,6 @@
-# Plate Rate
-
-Angular + Firebase app to manage personal restaurant ratings and compare them with public opinions.
-
-## Stack
-
-- Angular 21 (standalone components + signals)
-- Firebase Auth (Google Sign-In)
-- Cloud Firestore
-- Firebase Functions (optional Photon proxy + rating aggregation)
-- [Photon](https://photon.komoot.io/) (OpenStreetMap geocoding) for fast restaurant search with coordinates
-
-## Environment setup
-
-1. Create `src/environments/environment.ts` and fill `firebase` keys.
-2. Keep private credentials outside git.
-3. Restaurant search uses Photon from the browser — no API key. Set `apiBaseUrl` only if you need a Firebase proxy.
-
-## Run frontend
-
-```bash
-npm install
-npm start
-```
-
-## Run functions locally (optional)
-
-Restaurant search works without Functions. Deploy or emulate Functions only for `searchRestaurants` proxying and rating aggregation:
-
-```bash
-cd functions
-npm install
-npm run build
-firebase emulators:start --only functions,firestore
-```
-
-## Firestore resources
-
-- Rules: `firestore.rules`
-- Indexes: `firestore.indexes.json`
-
-## Main app flows
-
-- Login required with Google.
-- Personal list with:
-  - Card View (map preview from coordinates, opens Google Maps on click, user rate badge)
-  - Duplicate detection when searching or adding a restaurant already saved
-  - Table View (name, country, rate, added date)
-- Filters by name/country.
-- Sort by name, country, rate, and date (table).
-- Public detail shows place info, map, your list rating, community average (from list ratings), and text-only comments. Names appear only when a user has rated; display names are stored on save (`userName` from Google).
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a id="readme-top"></a>
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Don't forget to give the project a star!
-*** Thanks again! Now go create something AMAZING! :D
--->
-
-
 
 <!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -76,32 +8,28 @@ firebase emulators:start --only functions,firestore
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-
-
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="public/dark_brand_icon.png" alt="Logo" width="80" height="80">
+  <a href="https://github.com/CristianLS5/plate-rate">
+    <img src="public/dark_brand_icon.png" alt="Plate Rate logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">Plate Rate</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    Angular + Firebase app to manage personal restaurant ratings and compare them with community opinions.
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/CristianLS5/plate-rate"><strong>Explore the repo »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+    <a href="https://github.com/CristianLS5/plate-rate/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    <a href="https://github.com/CristianLS5/plate-rate/issues/new?labels=bug&template=bug-report---.md">Bug report template</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/CristianLS5/plate-rate/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
-
-
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -118,9 +46,12 @@ firebase emulators:start --only functions,firestore
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
+        <li><a href="#firebase--environment">Firebase &amp; environment</a></li>
+        <li><a href="#run-functions-locally-optional">Run Functions locally (optional)</a></li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
+    <li><a href="#firestore-resources">Firestore resources</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -129,204 +60,213 @@ firebase emulators:start --only functions,firestore
   </ol>
 </details>
 
-
-
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<img width="1202" height="737" alt="plate_rate" src="https://github.com/user-attachments/assets/65059d77-140c-46b7-8a97-698fc64a0953" />
+[![Plate Rate][product-screenshot]](https://github.com/CristianLS5/plate-rate)
 
-There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
+**Plate Rate** helps you build a personal list of restaurants you have visited, rate them on your own scale, and see how your scores compare with other users who saved the same place.
 
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should implement DRY principles to the rest of your life :smile:
+Why this project:
 
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people have contributed to expanding this template!
-
-Use the `BLANK_README.md` to get started.
+* Keep a single source of truth for your restaurant ratings instead of scattered notes or spreadsheets.
+* Search places quickly with geocoding-backed suggestions and coordinates for maps.
+* See community averages and text-only opinions on a shared detail page without exposing names unless someone has rated.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
 * [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
+* [![Firebase][Firebase.com]][Firebase-url]
+* [![Tailwind CSS][Tailwindcss.com]][Tailwind-url]
+* [![TypeScript][TypeScript.dev]][TypeScript-url]
+
+Additional services and libraries:
+
+* **Cloud Firestore** — user lists, opinions, and aggregated stats
+* **Firebase Auth** — Google Sign-In
+* **Firebase Functions** (optional) — Photon search proxy and rating aggregation
+* **[Photon](https://photon.komoot.io/)** — OpenStreetMap geocoding for restaurant search
+* **Angular Material** — UI components
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+Follow these steps to run the frontend locally.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+* [Node.js](https://nodejs.org/) (LTS recommended) and **npm**
+* A [Firebase](https://firebase.google.com/) project with **Authentication** (Google provider) and **Cloud Firestore** enabled
 
 ### Installation
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
-
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Clone the repository
    ```sh
-   git clone https://github.com/github_username/repo_name.git
+   git clone https://github.com/CristianLS5/plate-rate.git
+   cd plate-rate
    ```
-3. Install NPM packages
+2. Install dependencies
    ```sh
    npm install
    ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
-5. Change git remote url to avoid accidental pushes to base project
+3. Configure Firebase (see next section)
+4. Start the dev server
    ```sh
-   git remote set-url origin github_username/repo_name
-   git remote -v # confirm the changes
+   npm start
    ```
+   The app is served at `http://localhost:4200/` by default.
+
+### Firebase & environment
+
+1. Create or copy `src/environments/environment.ts` and `src/environments/environment.development.ts` with your Firebase web app config:
+   ```ts
+   export const environment = {
+     production: false,
+     firebase: {
+       apiKey: 'YOUR_API_KEY',
+       authDomain: 'YOUR_PROJECT.firebaseapp.com',
+       projectId: 'YOUR_PROJECT_ID',
+       storageBucket: 'YOUR_PROJECT.appspot.com',
+       messagingSenderId: 'YOUR_SENDER_ID',
+       appId: 'YOUR_APP_ID',
+     },
+     /** Optional Firebase Functions base URL to proxy Photon search. Leave empty to call Photon from the browser. */
+     apiBaseUrl: '',
+   };
+   ```
+2. Keep private credentials and service account keys **out of git**.
+3. Deploy Firestore rules and indexes from this repo before using production data:
+   ```sh
+   firebase deploy --only firestore:rules,firestore:indexes
+   ```
+
+Restaurant search uses [Photon](https://photon.komoot.io/) from the browser and does not require an API key. Set `apiBaseUrl` only if you want search requests to go through your Firebase Function proxy.
+
+### Run Functions locally (optional)
+
+Restaurant search works without Cloud Functions. Use the `functions` package only if you need the `searchRestaurants` proxy or automatic `aggregateRestaurantStats` on list changes:
+
+```sh
+cd functions
+npm install
+npm run build
+firebase emulators:start --only functions,firestore
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+After signing in with Google, you land on your **personal list**:
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+| Area | What you can do |
+|------|-----------------|
+| **Search & add** | Find restaurants via Photon; duplicate detection warns if a place is already on your list |
+| **Card view** | Map preview from coordinates; open Google Maps on click; your rate badge on each card |
+| **Table view** | Sort by name, country, rate, or date added; filter by name or country |
+| **Public detail** | `/public/:restaurantId` — place info, map, your list rating, community average, and text-only comments |
+
+Routes (lazy-loaded):
+
+* `/login` — Google Sign-In
+* `/personal` — your list (protected)
+* `/public/:restaurantId` — community view for a saved restaurant (protected)
+
+Community display rules:
+
+* Numeric ratings contribute to the community average (synced via Cloud Functions when configured).
+* Comments are text-only and do not affect averages.
+* User names appear on public views only when that user has a rating; display names are stored on save (`userName` from Google).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Firestore resources
 
+* Security rules: [`firestore.rules`](firestore.rules)
+* Composite indexes: [`firestore.indexes.json`](firestore.indexes.json)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ROADMAP -->
 ## Roadmap
 
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
+- [x] Google Sign-In with Firebase Auth
+- [x] Personal restaurant list (card and table views)
+- [x] Photon-backed search with duplicate detection
+- [x] Filters and table sorting
+- [x] Public detail with community average and opinions
+- [x] Optional Cloud Functions for search proxy and stats aggregation
+- [ ] Hosted demo / CI deploy pipeline
+- [ ] Export or backup of personal list
 
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/CristianLS5/plate-rate/issues) for proposed features and known bugs.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- CONTRIBUTING -->
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions are welcome. If you have an idea that would make Plate Rate better, fork the repo and open a pull request, or open an issue with the `enhancement` label.
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/MyFeature`)
+3. Commit your changes (`git commit -m 'Add MyFeature'`)
+4. Push to the branch (`git push origin feature/MyFeature`)
 5. Open a Pull Request
 
-### Top contributors:
-
-<!--<a href="https://github.com/othneildrew/Best-README-Template/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=othneildrew/Best-README-Template" alt="contrib.rocks image" />
-</a>-->
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the MIT License. See [`LICENSE.txt`](LICENSE.txt) for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Cristian López Solá — [LinkedIn][linkedin-url]
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project link: [https://github.com/CristianLS5/plate-rate](https://github.com/CristianLS5/plate-rate)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
-
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
-* [Img Shields](https://shields.io)
-* [GitHub Pages](https://pages.github.com)
-* [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
+* [Angular](https://angular.dev/) and [Firebase](https://firebase.google.com/) documentation
+* [Photon](https://photon.komoot.io/) and [OpenStreetMap](https://www.openstreetmap.org/) for geocoding data
+* [Komoot](https://www.komoot.com/) for operating the Photon API
+* [shields.io](https://shields.io) for README badges
+* [Best-README-Template](https://github.com/othneildrew/Best-README-Template) for the README structure
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
-[contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
-[forks-url]: https://github.com/othneildrew/Best-README-Template/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
-[stars-url]: https://github.com/othneildrew/Best-README-Template/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
-[issues-url]: https://github.com/othneildrew/Best-README-Template/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
-[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/CristianLS5/plate-rate.svg?style=for-the-badge
+[contributors-url]: https://github.com/CristianLS5/plate-rate/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/CristianLS5/plate-rate.svg?style=for-the-badge
+[forks-url]: https://github.com/CristianLS5/plate-rate/network/members
+[stars-shield]: https://img.shields.io/github/stars/CristianLS5/plate-rate.svg?style=for-the-badge
+[stars-url]: https://github.com/CristianLS5/plate-rate/stargazers
+[issues-shield]: https://img.shields.io/github/issues/CristianLS5/plate-rate.svg?style=for-the-badge
+[issues-url]: https://github.com/CristianLS5/plate-rate/issues
+[license-shield]: https://img.shields.io/github/license/CristianLS5/plate-rate.svg?style=for-the-badge
+[license-url]: https://github.com/CristianLS5/plate-rate/blob/main/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: images/screenshot.png
-[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
-[Next-url]: https://nextjs.org/
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
+[linkedin-url]: https://www.linkedin.com/in/cristian-l%C3%B3pez-sol%C3%A1-2b6493204/?locale=en_US
+[product-screenshot]: public/dark_brand_icon.png
 [Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
-[Svelte-url]: https://svelte.dev/
-[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
-[Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
+[Angular-url]: https://angular.dev/
+[Firebase.com]: https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white
+[Firebase-url]: https://firebase.google.com/
+[Tailwindcss.com]: https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
+[Tailwind-url]: https://tailwindcss.com/
+[TypeScript.dev]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
+[TypeScript-url]: https://www.typescriptlang.org/
