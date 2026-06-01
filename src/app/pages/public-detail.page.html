@@ -1,32 +1,46 @@
 <section class="center-panel large">
-  <a routerLink="/personal">Back to your list</a>
+  <a mat-button routerLink="/personal">Back to your list</a>
   @if (restaurant(); as restaurantInfo) {
-    <h1>{{ restaurantInfo.name }}</h1>
-    <p>{{ restaurantInfo.country }}</p>
+    <h1 class="mt-3">{{ restaurantInfo.name }}</h1>
+    <p class="text-muted">{{ restaurantInfo.city }}</p>
   } @else {
     <h1>Restaurant not found</h1>
   }
 
-  @if (myOpinion(); as opinion) {
-    <p>Your rate: <strong>{{ opinion.rate }}</strong></p>
-  } @else {
-    <p>You have not rated this place yet.</p>
-  }
+  <div class="mb-6 mt-4 grid gap-3 sm:grid-cols-2">
+    <mat-card class="rounded-xl">
+      <mat-card-content>
+        @if (myOpinion(); as opinion) {
+          <p>Your rate: <strong>{{ opinion.rate }}</strong></p>
+        } @else {
+          <p>You have not rated this place yet.</p>
+        }
+      </mat-card-content>
+    </mat-card>
 
-  @if (stats(); as statsInfo) {
-    <p>Global rate: <strong>{{ statsInfo.globalRateAvg | number: '1.1-2' }}</strong> ({{ statsInfo.ratingsCount }} votes)</p>
-  }
+    <mat-card class="rounded-xl">
+      <mat-card-content>
+        @if (stats(); as statsInfo) {
+          <p>
+            Global rate: <strong>{{ statsInfo.globalRateAvg | number: '1.1-2' }}</strong> ({{ statsInfo.ratingsCount }} votes)
+          </p>
+        } @else {
+          <p>Global stats unavailable.</p>
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
 
   <h2>Opinions</h2>
   @if (opinions().length === 0) {
     <p>No opinions yet.</p>
   } @else {
-    <ul class="opinions">
+    <ul class="opinions" [@staggerOpinions]="opinions().length">
       @for (item of opinions(); track item.userId + '-' + item.createdAt) {
-        <li>
+        <li class="opinion-item">
           <p><strong>{{ item.userName }}</strong> rated <strong>{{ item.rate }}</strong></p>
           <p>{{ item.text }}</p>
-          <small>{{ item.createdAt | date: 'medium' }}</small>
+          <small>{{ item.createdAt | date: 'dd/MM/yyyy HH:mm' }}</small>
         </li>
       }
     </ul>

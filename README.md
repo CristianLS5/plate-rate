@@ -7,31 +7,14 @@ Angular + Firebase app to manage personal restaurant ratings and compare them wi
 - Angular 21 (standalone components + signals)
 - Firebase Auth (Google Sign-In)
 - Cloud Firestore
-- Firebase Functions (Photon proxy + rating aggregation)
-- Photon (OpenStreetMap) for low-cost place suggestions
+- Firebase Functions (optional Photon proxy + rating aggregation)
+- [Photon](https://photon.komoot.io/) (OpenStreetMap geocoding) for fast restaurant search with coordinates
 
 ## Environment setup
 
 1. Create `src/environments/environment.ts` and fill `firebase` keys.
 2. Keep private credentials outside git.
-3. Optional: set `apiBaseUrl` to Functions emulator or deployed URL.
-
-Example:
-
-```ts
-export const environment = {
-  production: false,
-  firebase: {
-    apiKey: '...',
-    authDomain: '...',
-    projectId: '...',
-    storageBucket: '...',
-    messagingSenderId: '...',
-    appId: '...',
-  },
-  apiBaseUrl: 'http://localhost:5001/YOUR_PROJECT/us-central1',
-};
-```
+3. Restaurant search uses Photon from the browser — no API key. Set `apiBaseUrl` only if you need a Firebase proxy.
 
 ## Run frontend
 
@@ -40,7 +23,9 @@ npm install
 npm start
 ```
 
-## Run functions locally
+## Run functions locally (optional)
+
+Restaurant search works without Functions. Deploy or emulate Functions only for `searchRestaurants` proxying and rating aggregation:
 
 ```bash
 cd functions
@@ -58,7 +43,8 @@ firebase emulators:start --only functions,firestore
 
 - Login required with Google.
 - Personal list with:
-  - Card View (image, name, country, user rate badge)
+  - Card View (map preview from coordinates, opens Google Maps on click, user rate badge)
+  - Duplicate detection when searching or adding a restaurant already saved
   - Table View (name, country, rate, added date)
 - Filters by name/country.
 - Sort by name, country, rate, and date (table).

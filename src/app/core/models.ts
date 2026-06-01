@@ -1,13 +1,16 @@
 export interface Restaurant {
   id: string;
   name: string;
-  country: string;
+  city: string;
   imageUrl?: string;
   placeId?: string;
+  lat?: number;
+  lon?: number;
 }
 
 export interface UserRestaurant extends Restaurant {
   userId: string;
+  restaurantId: string;
   userRate?: number;
   addedAt: string;
 }
@@ -30,6 +33,9 @@ export interface RestaurantStats {
 export interface RestaurantSuggestion {
   id: string;
   name: string;
-  country: string;
+  city: string;
   imageUrl?: string;
+  placeId?: string;
+  lat?: number;
+  lon?: number;
 }

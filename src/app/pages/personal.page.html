@@ -1,93 +1,164 @@
 <section class="page">
-  <h1>Your restaurants</h1>
 
-  <form class="add-form" (submit)="$event.preventDefault(); addRestaurant()">
-    <label>
-      Country
-      <input type="text" [formControl]="addCountryControl" placeholder="Spain" />
-    </label>
-    <label>
-      Restaurant name
-      <input type="text" [formControl]="searchControl" placeholder="Start typing..." />
-    </label>
-    <label>
-      Your rate (optional 0-10)
-      <input type="number" min="0" max="10" [formControl]="rateControl" />
-    </label>
-    <button type="submit" [disabled]="!selectedSuggestion()">Add restaurant</button>
+  <form class="add-form surface-panel" (submit)="$event.preventDefault(); addRestaurant()">
+    <mat-form-field class="surface-field" appearance="outline" subscriptSizing="dynamic">
+      <mat-label>City</mat-label>
+      <input matInput type="text" [formControl]="addCityControl" placeholder="Madrid" />
+    </mat-form-field>
+    <mat-form-field class="surface-field" appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Restaurant name</mat-label>
+      <input matInput type="text" [formControl]="searchControl" placeholder="Start typing..." />
+    </mat-form-field>
+    <mat-form-field class="surface-field" appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Your rate (optional 0-10)</mat-label>
+      <input matInput type="number" min="0" max="10" [formControl]="rateControl" />
+    </mat-form-field>
+    <button mat-flat-button class="add-form__submit" type="submit" [disabled]="!canSubmitAdd()">
+      {{ isSubmitting() ? 'Adding...' : 'Add restaurant' }}
+    </button>
   </form>
-
-  @if (suggestions().length > 0) {
-    <ul class="suggestions">
-      @for (suggestion of suggestions(); track suggestion.id) {
-        <li>
-          <button type="button" (click)="chooseSuggestion(suggestion)">
-            {{ suggestion.name }} ({{ suggestion.country }})
-          </button>
-        </li>
-      }
-    </ul>
+  @if (addError()) {
+    <p class="warning-inline" role="alert">{{ addError() }}</p>
   }
 
-  <div class="toolbar">
-    <input type="text" [formControl]="nameFilter" placeholder="Filter by name" />
-    <input type="text" [formControl]="countryFilter" placeholder="Filter by country" />
-    <select (change)="setSort($any($event.target).value)">
-      <option value="name">Sort: Name</option>
-      <option value="country">Sort: Country</option>
-      <option value="rate">Sort: Rate</option>
-      <option value="date">Sort: Date</option>
-    </select>
-    <button type="button" (click)="setViewMode('card')">Card View</button>
-    <button type="button" (click)="setViewMode('table')">Table View</button>
+  @if (suggestions().length > 0) {
+    <div class="suggestions">
+      @for (suggestion of suggestions(); track suggestion.id) {
+        <button
+          mat-button
+          type="button"
+          class="suggestion-btn w-full justify-start"
+          [class.suggestion-btn--saved]="isAlreadyInList(suggestion)"
+          (click)="chooseSuggestion(suggestion)"
+        >
+          <span>{{ suggestion.name }} ({{ suggestion.city }})</span>
+          @if (isAlreadyInList(suggestion)) {
+            <span class="suggestion-tag">Already in your list</span>
+          }
+        </button>
+      }
+    </div>
+  }
+
+  <div class="toolbar-row surface-panel">
+    <div class="search-pill toolbar-row__search" role="search">
+      <label class="visually-hidden" for="list-search">Search by name or city</label>
+      <input
+        id="list-search"
+        class="search-pill__input"
+        type="search"
+        [formControl]="listSearch"
+        placeholder="Search by name or city"
+        (keydown.enter)="$event.preventDefault(); applyListSearch()"
+      />
+      <button type="button" class="search-pill__btn" (click)="applyListSearch()">Search</button>
+    </div>
+
+    <mat-form-field class="toolbar-row__sort surface-field toolbar-select" appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Sort</mat-label>
+      <mat-select panelClass="toolbar-select-panel" [value]="sortKey()" (valueChange)="setSort($event)">
+        <mat-option value="name">Name</mat-option>
+        <mat-option value="city">City</mat-option>
+        <mat-option value="rate">Rate</mat-option>
+        <mat-option value="date">Date</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-button-toggle-group
+      class="toolbar-row__view segmented-control"
+      hideSingleSelectionIndicator
+      [value]="viewMode()"
+      aria-label="View mode"
+      (valueChange)="setViewMode($event)"
+    >
+      <mat-button-toggle value="card">Card</mat-button-toggle>
+      <mat-button-toggle value="table">Table</mat-button-toggle>
+    </mat-button-toggle-group>
   </div>
 
   @if (filteredRestaurants().length === 0) {
-    <p class="empty">Let's start by adding your first restaurant.</p>
+    <mat-card class="empty" [@fadeInUp]>
+      <mat-card-content>
+        @if (isListSearchActive()) {
+          No restaurants match your search.
+        } @else {
+          Let's start by adding your first restaurant.
+        }
+      </mat-card-content>
+    </mat-card>
   } @else if (viewMode() === 'card') {
     <div class="cards">
-      @for (item of filteredRestaurants(); track item.id) {
-        <article class="card">
-          <div class="image-wrap">
-            <img [src]="item.imageUrl || 'https://placehold.co/320x180'" [alt]="item.name" />
-            <span class="badge">{{ item.userRate ?? 'No rate' }}</span>
+      @for (item of filteredRestaurants(); track item.restaurantId) {
+        <mat-card class="card" [@fadeInUp]>
+          <div class="map-wrap">
+            @if (mapEmbedSrc(item); as embedSrc) {
+              <iframe
+                [src]="embedSrc"
+                class="map-embed"
+                width="100%"
+                height="180"
+                style="border: 0"
+                tabindex="-1"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                [title]="'Map of ' + item.name"
+              ></iframe>
+              @if (mapsLink(item); as href) {
+                <a class="map-open-link" [href]="href" target="_blank" rel="noopener noreferrer">
+                  Open in Google Maps
+                </a>
+              }
+            } @else {
+              <p class="map-fallback">No map coordinates for this place.</p>
+            }
+            @if (rateAriaLabel(item.userRate); as aria) {
+              <span [class]="rateBadgeClass(rateTone(item.userRate))" [attr.aria-label]="aria">
+                {{ rateLabel(item.userRate) }}
+              </span>
+            } @else {
+              <span class="badge">{{ rateLabel(item.userRate) }}</span>
+            }
           </div>
-          <h3>{{ item.name }}</h3>
-          <p>{{ item.country }}</p>
-          @if (!item.userRate && item.userRate !== 0) {
-            <p class="warning">Missing rate</p>
-          }
-          <a [routerLink]="['/public', item.id]">See what others think about this place</a>
-        </article>
+          <mat-card-content>
+            <h3>{{ item.name }}</h3>
+            <p>{{ item.city }}</p>
+            <a mat-button class="card-link" [routerLink]="['/public', item.restaurantId]">See what others think</a>
+          </mat-card-content>
+        </mat-card>
       }
     </div>
   } @else {
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Country</th>
-          <th>Rate</th>
-          <th>Added At</th>
-          <th>Public</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (item of filteredRestaurants(); track item.id) {
+    <div class="table-wrap">
+      <table>
+        <thead>
           <tr>
-            <td>{{ item.name }}</td>
-            <td>{{ item.country }}</td>
-            <td>
-              {{ item.userRate ?? 'No rate' }}
-              @if (!item.userRate && item.userRate !== 0) {
-                <span class="warning-inline">Missing</span>
-              }
-            </td>
-            <td>{{ item.addedAt | date: 'medium' }}</td>
-            <td><a [routerLink]="['/public', item.id]">Open</a></td>
+            <th>Name</th>
+            <th>City</th>
+            <th>Rate</th>
+            <th>Added At</th>
+            <th>Public</th>
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (item of filteredRestaurants(); track item.restaurantId) {
+            <tr [@fadeInUp]>
+              <td>{{ item.name }}</td>
+              <td>{{ item.city }}</td>
+              <td>
+                @if (rateAriaLabel(item.userRate); as aria) {
+                  <span [class]="rateBadgeClass(rateTone(item.userRate))" [attr.aria-label]="aria">
+                    {{ rateLabel(item.userRate) }}
+                  </span>
+                } @else {
+                  <span>{{ rateLabel(item.userRate) }}</span>
+                }
+              </td>
+              <td>{{ item.addedAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td><a mat-button class="table-link" [routerLink]="['/public', item.restaurantId]">Open</a></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   }
 </section>

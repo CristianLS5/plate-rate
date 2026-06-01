@@ -10,7 +10,12 @@ export class PublicRatingsService {
     if (!snapshot.exists()) {
       return null;
     }
-    return { id: snapshot.id, ...(snapshot.data() as Omit<Restaurant, 'id'>) };
+    const data = snapshot.data() as Omit<Restaurant, 'id' | 'city'> & { country?: string; city?: string };
+    return {
+      id: snapshot.id,
+      ...data,
+      city: data.city ?? data.country ?? '',
+    };
   }
 
   async getStats(restaurantId: string): Promise<RestaurantStats> {

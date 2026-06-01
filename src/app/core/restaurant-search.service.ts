@@ -1,48 +1,41 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { searchRestaurantsViaPhoton } from './photon-search';
 import type { RestaurantSuggestion } from './models';
 import { environment } from '../../environments/environment';
 
 interface SearchResponse {
   suggestions: RestaurantSuggestion[];
+  error?: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class RestaurantSearchService {
   private readonly http = inject(HttpClient);
 
-  async search(query: string, country: string): Promise<RestaurantSuggestion[]> {
-    if (query.trim().length < 2) {
+  async search(query: string, city: string): Promise<RestaurantSuggestion[]> {
+    if (query.trim().length < 2 || city.trim().length < 2) {
       return [];
     }
 
-    const params = new HttpParams().set('query', query).set('country', country);
-
     if (environment.apiBaseUrl) {
+      const params = new HttpParams().set('query', query).set('city', city);
       const response = await firstValueFrom(
         this.http.get<SearchResponse>(`${environment.apiBaseUrl}/searchRestaurants`, { params }),
       );
-      return response.suggestions;
+      if (response.error) {
+        console.warn('Restaurant search failed:', response.error);
+      }
+      return response.suggestions ?? [];
     }
 
-    const photonResponse = await firstValueFrom(
-      this.http.get<{ features: Array<{ properties: Record<string, string>; geometry: { coordinates: number[] } }> }>(
-        'https://photon.komoot.io/api/',
-        { params: new HttpParams().set('q', `${query} ${country}`).set('limit', 10) },
-      ),
-    );
-
-    return photonResponse.features
-      .map((feature) => {
-        const name = feature.properties['name'] ?? '';
-        const area = feature.properties['country'] ?? country;
-        if (!name || !area) {
-          return null;
-        }
-        const id = `${name}-${area}-${feature.geometry.coordinates.join('-')}`;
-        return { id, name, country: area } satisfies RestaurantSuggestion;
-      })
-      .filter((item): item is RestaurantSuggestion => item !== null);
+    try {
+      return await searchRestaurantsViaPhoton(query, city, 10);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown Photon error';
+      console.warn('Restaurant search failed:', message);
+      return [];
+    }
   }
 }

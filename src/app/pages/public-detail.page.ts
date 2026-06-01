@@ -1,5 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { animate, query, stagger, style, transition, trigger } from '@angular/animations';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import type { Opinion, Restaurant, RestaurantStats } from '../core/models';
@@ -7,9 +10,23 @@ import { PublicRatingsService } from '../core/public-ratings.service';
 
 @Component({
   selector: 'app-public-detail-page',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, MatButtonModule, MatCardModule],
   templateUrl: './public-detail.page.html',
   styleUrl: './shared-page.scss',
+  animations: [
+    trigger('staggerOpinions', [
+      transition('* => *', [
+        query(
+          '.opinion-item',
+          [
+            style({ opacity: 0, transform: 'translateY(8px)' }),
+            stagger(70, [animate('220ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))]),
+          ],
+          { optional: true },
+        ),
+      ]),
+    ]),
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublicDetailPage {

@@ -1,8 +1,34 @@
-<header class="topbar">
-  <a routerLink="/personal" class="brand">Plate Rate</a>
+<mat-toolbar class="topbar">
+  <a routerLink="/personal" class="brand">
+    <img
+      class="brand__icon"
+      [src]="themeService.brandIconPath()"
+      width="32"
+      height="32"
+      alt=""
+    />
+    <span class="brand__text">Plate Rate</span>
+  </a>
+  <span class="spacer"></span>
+  <mat-button-toggle-group
+    class="theme-toggle segmented-control segmented-control--icons"
+    hideSingleSelectionIndicator
+    [value]="themeService.theme()"
+    aria-label="Color theme"
+    (valueChange)="setTheme($event)"
+  >
+    <mat-button-toggle value="light" aria-label="Light mode">
+      <mat-icon>light_mode</mat-icon>
+    </mat-button-toggle>
+    <mat-button-toggle value="dark" aria-label="Dark mode">
+      <mat-icon>dark_mode</mat-icon>
+    </mat-button-toggle>
+  </mat-button-toggle-group>
   @if (auth.isAuthenticated()) {
-    <button type="button" (click)="auth.logout()">Log out</button>
+    <button mat-stroked-button class="logout-btn" type="button" (click)="auth.logout()">Log out</button>
   }
-</header>
+</mat-toolbar>
 
-<router-outlet />
+<main class="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
+  <router-outlet />
+</main>
