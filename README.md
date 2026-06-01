@@ -20,7 +20,7 @@
   <p align="center">
     Angular + Firebase app to manage personal restaurant ratings and compare them with community opinions.
     <br />
-    <a href="https://github.com/CristianLS5/plate-rate"><strong>Explore the repo »</strong></a>
+    <a href="https://github.com/CristianLS5/plate-rate.png"><strong>Explore the repo »</strong></a>
     <br />
     <br />
     <a href="https://github.com/CristianLS5/plate-rate/issues">Report Bug</a>
